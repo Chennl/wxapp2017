@@ -1,6 +1,4 @@
-/*
-* CopyRight 2015 All Rights Reserved
-*/		
+ 	
 
 <?php
 /*
