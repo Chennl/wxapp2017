@@ -6,11 +6,11 @@ if (!isset($_GET['echostr'])) {
 }else{
     $wechatObj->valid();
 }
-
+ 
 
 class wechatCallbackapiHandler
 {
-    //验证签名
+    //楠岃瘉绛惧悕
     public function valid()
     {
         $echoStr = $_GET["echostr"];
@@ -28,7 +28,7 @@ class wechatCallbackapiHandler
         }
     }
 
-    //响应消息
+    //鍝嶅簲娑堟伅
     public function responseMsg()
     {
         $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
@@ -38,19 +38,19 @@ class wechatCallbackapiHandler
             $RX_TYPE = trim($postObj->MsgType);
 
             if (($postObj->MsgType == "event") && ($postObj->Event == "subscribe" || $postObj->Event == "unsubscribe")){
-                //过滤关注和取消关注事件
+                //杩囨护鍏虫敞鍜屽彇娑堝叧娉ㄤ簨浠�
             }else{
                 
             }
             
-            //消息类型分离
+            //娑堟伅绫诲瀷鍒嗙
             switch ($RX_TYPE)
             {
                 case "event":
                     $result = $this->receiveEvent($postObj);
                     break;
                 case "text":
-                   if (strstr($postObj->Content, "第三方")){
+                   if (strstr($postObj->Content, "绗笁鏂�")){
                         $result = $this->relayPart3("http://www.fangbei.org/test.php".'?'.$_SERVER['QUERY_STRING'], $postStr);
                     }else{
                         $result = $this->receiveText($postObj);
@@ -83,65 +83,65 @@ class wechatCallbackapiHandler
         }
     }
 
-    //接收事件消息
+    //鎺ユ敹浜嬩欢娑堟伅
     private function receiveEvent($object)
     {
         $content = "";
         switch ($object->Event)
         {
             case "subscribe":
-                $content = "欢迎关注： 雪净胡田牧马还,明月羌笛戍楼间. ";
-                $content .= (!empty($object->EventKey))?("\n来自二维码场景 ".str_replace("qrscene_","",$object->EventKey)):"";
+                $content = "娆㈣繋鍏虫敞锛� 闆噣鑳＄敯鐗ч┈杩�,鏄庢湀缇岀瑳鎴嶆ゼ闂�. ";
+                $content .= (!empty($object->EventKey))?("\n鏉ヨ嚜浜岀淮鐮佸満鏅� ".str_replace("qrscene_","",$object->EventKey)):"";
                 break;
             case "unsubscribe":
-                $content = "取消关注";
+                $content = "鍙栨秷鍏虫敞";
                 break;
             case "CLICK":
                 switch ($object->EventKey)
                 {
                     case "COMPANY":
                         $content = array();
-                        $content[] = array("Title"=>"明月羌笛工作室", "Description"=>"", "PicUrl"=>"http://discuz.comli.com/weixin/weather/icon/cartoon.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
+                        $content[] = array("Title"=>"鏄庢湀缇岀瑳宸ヤ綔瀹�", "Description"=>"", "PicUrl"=>"http://discuz.comli.com/weixin/weather/icon/cartoon.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
                         break;
                     default:
-                        $content = "点击菜单：".$object->EventKey;
+                        $content = "鐐瑰嚮鑿滃崟锛�".$object->EventKey;
                         break;
                 }
                 break;
             case "VIEW":
-                $content = "跳转链接 ".$object->EventKey;
+                $content = "璺宠浆閾炬帴 ".$object->EventKey;
                 break;
             case "SCAN":
-                $content = "扫描场景 ".$object->EventKey;
+                $content = "鎵弿鍦烘櫙 ".$object->EventKey;
                 break;
             case "LOCATION":
-                $content = "上传位置：纬度 ".$object->Latitude.";经度 ".$object->Longitude;
+                $content = "涓婁紶浣嶇疆锛氱含搴� ".$object->Latitude.";缁忓害 ".$object->Longitude;
                 break;
             case "scancode_waitmsg":
                 if ($object->ScanCodeInfo->ScanType == "qrcode"){
-                    $content = "扫码带提示：类型 二维码 结果：".$object->ScanCodeInfo->ScanResult;
+                    $content = "鎵爜甯︽彁绀猴細绫诲瀷 浜岀淮鐮� 缁撴灉锛�".$object->ScanCodeInfo->ScanResult;
                 }else if ($object->ScanCodeInfo->ScanType == "barcode"){
                     $codeinfo = explode(",",strval($object->ScanCodeInfo->ScanResult));
                     $codeValue = $codeinfo[1];
-                    $content = "扫码带提示：类型 条形码 结果：".$codeValue;
+                    $content = "鎵爜甯︽彁绀猴細绫诲瀷 鏉″舰鐮� 缁撴灉锛�".$codeValue;
                 }else{
-                    $content = "扫码带提示：类型 ".$object->ScanCodeInfo->ScanType." 结果：".$object->ScanCodeInfo->ScanResult;
+                    $content = "鎵爜甯︽彁绀猴細绫诲瀷 ".$object->ScanCodeInfo->ScanType." 缁撴灉锛�".$object->ScanCodeInfo->ScanResult;
                 }
                 break;
             case "scancode_push":
-                $content = "扫码推事件";
+                $content = "鎵爜鎺ㄤ簨浠�";
                 break;
             case "pic_sysphoto":
-                $content = "系统拍照";
+                $content = "绯荤粺鎷嶇収";
                 break;
             case "pic_weixin":
-                $content = "相册发图：数量 ".$object->SendPicsInfo->Count;
+                $content = "鐩稿唽鍙戝浘锛氭暟閲� ".$object->SendPicsInfo->Count;
                 break;
             case "pic_photo_or_album":
-                $content = "拍照或者相册：数量 ".$object->SendPicsInfo->Count;
+                $content = "鎷嶇収鎴栬�呯浉鍐岋細鏁伴噺 ".$object->SendPicsInfo->Count;
                 break;
             case "location_select":
-                $content = "发送位置：标签 ".$object->SendLocationInfo->Label;
+                $content = "鍙戦�佷綅缃細鏍囩 ".$object->SendLocationInfo->Label;
                 break;
             default:
                 $content = "receive a new event: ".$object->Event;
@@ -160,34 +160,34 @@ class wechatCallbackapiHandler
         return $result;
     }
 
-    //接收文本消息
+    //鎺ユ敹鏂囨湰娑堟伅
     private function receiveText($object)
     {
         $keyword = trim($object->Content);
-        //多客服人工回复模式
-        if (strstr($keyword, "请问在吗") || strstr($keyword, "在线客服")){
+        //澶氬鏈嶄汉宸ュ洖澶嶆ā寮�
+        if (strstr($keyword, "璇烽棶鍦ㄥ悧") || strstr($keyword, "鍦ㄧ嚎瀹㈡湇")){
             $result = $this->transmitService($object);
             return $result;
         }
 
-        //自动回复模式
-        if (strstr($keyword, "文本")){
-            $content = "这是个文本消息";
-        }else if (strstr($keyword, "表情")){
-            $content = "中国：".$this->bytes_to_emoji(0x1F1E8).$this->bytes_to_emoji(0x1F1F3)."\n仙人掌：".$this->bytes_to_emoji(0x1F335);
-        }else if (strstr($keyword, "单图文")){
+        //鑷姩鍥炲妯″紡
+        if (strstr($keyword, "鏂囨湰")){
+            $content = "杩欐槸涓枃鏈秷鎭�";
+        }else if (strstr($keyword, "琛ㄦ儏")){
+            $content = "涓浗锛�".$this->bytes_to_emoji(0x1F1E8).$this->bytes_to_emoji(0x1F1F3)."\n浠欎汉鎺岋細".$this->bytes_to_emoji(0x1F335);
+        }else if (strstr($keyword, "鍗曞浘鏂�")){
             $content = array();
-            $content[] = array("Title"=>"单图文标题",  "Description"=>"单图文内容", "PicUrl"=>"http://discuz.comli.com/weixin/weather/icon/cartoon.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
-        }else if (strstr($keyword, "图文") || strstr($keyword, "多图文")){
+            $content[] = array("Title"=>"鍗曞浘鏂囨爣棰�",  "Description"=>"鍗曞浘鏂囧唴瀹�", "PicUrl"=>"http://discuz.comli.com/weixin/weather/icon/cartoon.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
+        }else if (strstr($keyword, "鍥炬枃") || strstr($keyword, "澶氬浘鏂�")){
             $content = array();
-            $content[] = array("Title"=>"多图文1标题", "Description"=>"", "PicUrl"=>"http://discuz.comli.com/weixin/weather/icon/cartoon.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
-            $content[] = array("Title"=>"多图文2标题", "Description"=>"", "PicUrl"=>"http://d.hiphotos.bdimg.com/wisegame/pic/item/f3529822720e0cf3ac9f1ada0846f21fbe09aaa3.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
-            $content[] = array("Title"=>"多图文3标题", "Description"=>"", "PicUrl"=>"http://g.hiphotos.bdimg.com/wisegame/pic/item/18cb0a46f21fbe090d338acc6a600c338644adfd.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
-        }else if (strstr($keyword, "音乐")){
+            $content[] = array("Title"=>"澶氬浘鏂�1鏍囬", "Description"=>"", "PicUrl"=>"http://discuz.comli.com/weixin/weather/icon/cartoon.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
+            $content[] = array("Title"=>"澶氬浘鏂�2鏍囬", "Description"=>"", "PicUrl"=>"http://d.hiphotos.bdimg.com/wisegame/pic/item/f3529822720e0cf3ac9f1ada0846f21fbe09aaa3.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
+            $content[] = array("Title"=>"澶氬浘鏂�3鏍囬", "Description"=>"", "PicUrl"=>"http://g.hiphotos.bdimg.com/wisegame/pic/item/18cb0a46f21fbe090d338acc6a600c338644adfd.jpg", "Url" =>"http://m.cnblogs.com/?u=txw1958");
+        }else if (strstr($keyword, "闊充箰")){
             $content = array();
-            $content = array("Title"=>"最炫民族风", "Description"=>"歌手：凤凰传奇", "MusicUrl"=>"http://121.199.4.61/music/zxmzf.mp3", "HQMusicUrl"=>"http://121.199.4.61/music/zxmzf.mp3"); 
+            $content = array("Title"=>"鏈�鐐皯鏃忛", "Description"=>"姝屾墜锛氬嚖鍑颁紶濂�", "MusicUrl"=>"http://121.199.4.61/music/zxmzf.mp3", "HQMusicUrl"=>"http://121.199.4.61/music/zxmzf.mp3"); 
         }else{
-            $content = date("Y-m-d H:i:s",time())."\nOpenID：".$object->FromUserName."\n技术支持 方倍工作室";
+            $content = date("Y-m-d H:i:s",time())."\nOpenID锛�".$object->FromUserName."\n鎶�鏈敮鎸� 鏂瑰�嶅伐浣滃";
         }
 
         if(is_array($content)){
@@ -202,7 +202,7 @@ class wechatCallbackapiHandler
         return $result;
     }
 
-    //接收图片消息
+    //鎺ユ敹鍥剧墖娑堟伅
     private function receiveImage($object)
     {
         $content = array("MediaId"=>$object->MediaId);
@@ -210,19 +210,19 @@ class wechatCallbackapiHandler
         return $result;
     }
 
-    //接收位置消息
+    //鎺ユ敹浣嶇疆娑堟伅
     private function receiveLocation($object)
     {
-        $content = "你发送的是位置，经度为：".$object->Location_Y."；纬度为：".$object->Location_X."；缩放级别为：".$object->Scale."；位置为：".$object->Label;
+        $content = "浣犲彂閫佺殑鏄綅缃紝缁忓害涓猴細".$object->Location_Y."锛涚含搴︿负锛�".$object->Location_X."锛涚缉鏀剧骇鍒负锛�".$object->Scale."锛涗綅缃负锛�".$object->Label;
         $result = $this->transmitText($object, $content);
         return $result;
     }
 
-    //接收语音消息
+    //鎺ユ敹璇煶娑堟伅
     private function receiveVoice($object)
     {
         if (isset($object->Recognition) && !empty($object->Recognition)){
-            $content = "你刚才说的是：".$object->Recognition;
+            $content = "浣犲垰鎵嶈鐨勬槸锛�".$object->Recognition;
             $result = $this->transmitText($object, $content);
         }else{
             $content = array("MediaId"=>$object->MediaId);
@@ -231,7 +231,7 @@ class wechatCallbackapiHandler
         return $result;
     }
 
-    //接收视频消息
+    //鎺ユ敹瑙嗛娑堟伅
     private function receiveVideo($object)
     {
         $content = array("MediaId"=>$object->MediaId, "ThumbMediaId"=>$object->ThumbMediaId, "Title"=>"", "Description"=>"");
@@ -239,15 +239,15 @@ class wechatCallbackapiHandler
         return $result;
     }
 
-    //接收链接消息
+    //鎺ユ敹閾炬帴娑堟伅
     private function receiveLink($object)
     {
-        $content = "你发送的是链接，标题为：".$object->Title."；内容为：".$object->Description."；链接地址为：".$object->Url;
+        $content = "浣犲彂閫佺殑鏄摼鎺ワ紝鏍囬涓猴細".$object->Title."锛涘唴瀹逛负锛�".$object->Description."锛涢摼鎺ュ湴鍧�涓猴細".$object->Url;
         $result = $this->transmitText($object, $content);
         return $result;
     }
 
-    //回复文本消息
+    //鍥炲鏂囨湰娑堟伅
     private function transmitText($object, $content)
     {
         if (!isset($content) || empty($content)){
@@ -266,7 +266,7 @@ class wechatCallbackapiHandler
         return $result;
     }
 
-    //回复图文消息
+    //鍥炲鍥炬枃娑堟伅
     private function transmitNews($object, $newsArray)
     {
         if(!is_array($newsArray)){
@@ -297,7 +297,7 @@ $item_str    </Articles>
         return $result;
     }
 
-    //回复音乐消息
+    //鍥炲闊充箰娑堟伅
     private function transmitMusic($object, $musicArray)
     {
         if(!is_array($musicArray)){
@@ -324,7 +324,7 @@ $item_str    </Articles>
         return $result;
     }
 
-    //回复图片消息
+    //鍥炲鍥剧墖娑堟伅
     private function transmitImage($object, $imageArray)
     {
         $itemTpl = "<Image>
@@ -345,7 +345,7 @@ $item_str    </Articles>
         return $result;
     }
 
-    //回复语音消息
+    //鍥炲璇煶娑堟伅
     private function transmitVoice($object, $voiceArray)
     {
         $itemTpl = "<Voice>
@@ -365,7 +365,7 @@ $item_str    </Articles>
         return $result;
     }
 
-    //回复视频消息
+    //鍥炲瑙嗛娑堟伅
     private function transmitVideo($object, $videoArray)
     {
         $itemTpl = "<Video>
@@ -389,7 +389,7 @@ $item_str    </Articles>
         return $result;
     }
 
-    //回复多客服消息
+    //鍥炲澶氬鏈嶆秷鎭�
     private function transmitService($object)
     {
         $xmlTpl = "<xml>
@@ -402,7 +402,7 @@ $item_str    </Articles>
         return $result;
     }
 
-    //回复第三方接口消息
+    //鍥炲绗笁鏂规帴鍙ｆ秷鎭�
     private function relayPart3($url, $rawData)
     {
         $headers = array("Content-Type: text/xml; charset=utf-8");
@@ -417,7 +417,7 @@ $item_str    </Articles>
         return $output;
     }
 
-    //字节转Emoji表情
+    //瀛楄妭杞珽moji琛ㄦ儏
     function bytes_to_emoji($cp)
     {
         if ($cp > 0x10000){       # 4 bytes
@@ -431,7 +431,7 @@ $item_str    </Articles>
         }
     }
 
-    //日志记录
+    //鏃ュ織璁板綍
     private function logger($log_content)
     {
         if(isset($_SERVER['HTTP_APPNAME'])){   //SAE
