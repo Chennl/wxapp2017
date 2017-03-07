@@ -50,7 +50,7 @@ class wechatCallbackapiHandler
 				case "text":
 					if (strstr($postObj->Content, "第三方")){
 						//http://www.hzgbjy.com/xapp2017/index.php
-						$result = $this->relayPart3("http://localhost/wxapp2017/part3.php".'?'.$_SERVER['QUERY_STRING'], $postStr);
+						$result = $this->relayPart3("http://www.hzgbjy.com/wxapp2017/part3.php".'?'.$_SERVER['QUERY_STRING'], $postStr);
 					}else{
 						$result = $this->receiveText($postObj);
 					}
